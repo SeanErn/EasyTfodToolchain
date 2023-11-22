@@ -1,0 +1,9 @@
+{
+    "projectName" : "PROJECT_NAME",
+    "model" : {
+        "numberOfClasses" : "NUM_CLASSES",
+        "batchSize" : "BATCH_SIZE",
+        "pretrainedModel": "PRETRAINED_MODEL",
+        "trainOnTpu": "TRAIN_ON_TPU"
+    }
+}

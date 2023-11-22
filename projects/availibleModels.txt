@@ -1,0 +1,2 @@
+SSD MobileNet v2 320x320
+SSD MobileNet V2 FPNLite 320x320

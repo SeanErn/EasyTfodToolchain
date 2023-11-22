@@ -1,0 +1,6 @@
+Cython==3.0.5
+tensorflow==2.15.0
+tflite_support==0.4.4
+opencv-contrib-python==4.8.1.78
+labelImg==1.8.6
+textual
