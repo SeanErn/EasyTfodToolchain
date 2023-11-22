@@ -86,14 +86,6 @@ function installObjectDetectionApi {
     echo "prog90"
 }
 
-
-# Install python v3.11.x if not already exists, activate it
-pyenv install 3.11 -s
-pyenv global 3.11
-
-# Install all PIP requirements
-pip install -r requirements.txt
-
 # Check if CUDA is installed. If not, install it.
 apt show cuda-toolkit-12-3 > /dev/null 2>&1
 if [ $? -eq 0 ]; then
