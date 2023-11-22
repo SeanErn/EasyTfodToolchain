@@ -1,4 +1,3 @@
-# Basic outline
+# EasyTfodToolchain
 
-1. Run `installDependencies.sh` to install all of the system-level dependencies for the install script. (Yes I know thats dumb)
-2. Run `install.sh` to install all tensorflow requirements and libraries
+An user-friendly toolchain for training v2 TensorFlow object detector models
