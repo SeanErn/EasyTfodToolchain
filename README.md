@@ -35,3 +35,4 @@ python run.py
 - [ ] FULL USER GUIDE
 - [ ] MVP
 - [ ] Advanced purge dataset, purge logs, reinstall, etc
+- [ ] TF v1 support 
