@@ -1,8 +1,8 @@
 from sys import exit
 from platform import python_version_tuple
-from pkg_resources import get_distribution
+import pkg_resources
 
-def package_installed() -> bool:
+def package_installed(package_name: str) -> bool:
     try:
        pkg_resources.get_distribution(package_name)
        return True
@@ -10,7 +10,7 @@ def package_installed() -> bool:
        return False
 
 def meets_min_requirements() -> bool:
-    if (int(python_version_tuple()[1]) >= 11) and (get_distribution("textual")):
+    if (int(python_version_tuple()[1]) >= 11) and package_installed("textual"):
         return True
     else:
         return False

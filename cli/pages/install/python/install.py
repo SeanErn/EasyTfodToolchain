@@ -6,6 +6,7 @@ from textual.reactive import Reactive
 from textual.screen import Screen, ModalScreen
 from textual.containers import Vertical
 from pathlib import Path
+from cli.shared.workflowTabs import WorkflowTabs
 import sys
 import threading
 import os
@@ -15,8 +16,8 @@ class LogInstall(ModalScreen):
     def compose(self) -> ComposeResult:
         yield Vertical(
             Header(),
-            RichLog(highlight=True, id="log"),
-            id="logContainer"
+            RichLog(highlight=True, id="installLog"),
+            id="installLogContainer"
         )
     
     def on_mount(self) -> None:
@@ -42,6 +43,7 @@ class Install(Screen):
     BINDINGS=[("l", "toggle_log", "Toggles the log viewer")]
     def compose(self) -> ComposeResult:
         yield Vertical(
+            WorkflowTabs(),
             InstallContent(),
             InstallButtons(),
             id="installContainer"
@@ -55,11 +57,11 @@ class InstallContent(Static):
   """content of install screen"""
 #   logPipe = Reactive("Press start to start the installation.")
   def compose(self) -> ComposeResult:
-    yield MarkdownViewer(Path("cli/md/install.md").read_text(), show_table_of_contents=False)
+    yield MarkdownViewer(Path("cli/pages/install/md/install.md").read_text(), show_table_of_contents=False)
 
 class InstallButtons(Static):
  """Install widget"""
- BINDINGS=[("space", "start_install", "Start the install"), ("escape", "cancel_install", "Stops the install")]
+ BINDINGS=[("space", "start_install", "Start the install"), ("q", "cancel_install", "Stops the install")]
  started = False
 
  def action_start_install(self) -> None:
@@ -106,6 +108,10 @@ class InstallButtons(Static):
                # Remove the 'prog' prefix and print the progress
                progress = output[4:] # Slice the string from the 4th character
                self.query_one(ProgressBar).progress = float(progress)
+
+               if progress == "Done":
+                self.query("#cancelBtn").remove()
+                self.quer
  
  def compose(self) -> ComposeResult:
      """Child widgets of install"""
