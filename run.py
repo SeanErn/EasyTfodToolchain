@@ -7,10 +7,16 @@ subprocess.run(["sudo", "-v"])
 
 # Check for minimum requirements
 if not meets_min_requirements():
-    print("Hang tight! We are installing dependencies for you. (This may take a while depending on your internet speed)")
-    process = subprocess.Popen(['./installDependencies.sh'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    print(
+        "Hang tight! We are installing dependencies for you. (This may take a while depending on your internet speed)"
+    )
+    process = subprocess.Popen(
+        ["./installDependencies.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
     process.wait()
-    exit("Dependencies have been installed. Please restart your terminal and run this program again.")
+    exit(
+        "Dependencies have been installed. Please restart your terminal and run this program again."
+    )
 # Run rest as normal
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
@@ -18,6 +24,8 @@ from textual.widgets import Button, Footer, Header, Static, Markdown
 from pathlib import Path
 from cli.pages.install.python.install import Install
 from cli.pages.dash.python.dash import Dash
+
+
 class RunToolkit(App):
     """Main UI of Toolkit"""
 
@@ -34,6 +42,7 @@ class RunToolkit(App):
     def action_quit(self) -> None:
         """An action to quit the app. DOES NOT STOP THE INSTALLATION IF STARTED"""
         exit(0)
+
 
 if __name__ == "__main__":
     app = RunToolkit()
