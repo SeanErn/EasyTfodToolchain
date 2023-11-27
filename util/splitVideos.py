@@ -32,6 +32,14 @@ def extract_frames(video_path: str, skip_frames: int):
    # Set up a counter to keep track of the frames we've extracted
    counter = 0
 
+   # Print info
+   print("Splitting video with following parameters:")
+   print("File: "+args.filename)
+   print("Frame skip: "+args.frame)
+   print("--- Video Info ---")
+   print("Path: "+video_path)
+   print("Total # of Frames: "+total_frames)
+
    # Loop through the frames of the video
    while True:
        # Read the next frame
