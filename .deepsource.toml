@@ -1,0 +1,17 @@
+version = 1
+
+test_patterns = ["test/**"]
+
+exclude_patterns = ["models/**"]
+
+[[analyzers]]
+name = "shell"
+
+[[analyzers]]
+name = "python"
+
+  [analyzers.meta]
+  runtime_version = "3.x.x"
+
+[[transformers]]
+name = "ruff"
