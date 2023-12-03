@@ -1,4 +1,3 @@
-from sys import exit
 from platform import python_version_tuple
 import pkg_resources
 

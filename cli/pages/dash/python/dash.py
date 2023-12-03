@@ -1,27 +1,16 @@
-import subprocess
-from textual.app import App, ComposeResult
-from textual.containers import ScrollableContainer, Vertical
+from textual.app import ComposeResult
+from textual.containers import Vertical
 from textual.widgets import (
-    Button,
-    Footer,
     Header,
-    Static,
-    MarkdownViewer,
-    ProgressBar,
     RichLog,
-    Tabs,
-    Tab,
     TextArea,
 )
-from textual.reactive import Reactive
 from textual.screen import Screen, ModalScreen
 from textual.containers import Grid
 from pathlib import Path
 
 from cli.pages.install.python.install import LogInstall
 from cli.shared.workflowTabs import WorkflowTabs
-import sys
-import threading
 import os
 
 

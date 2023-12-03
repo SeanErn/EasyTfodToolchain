@@ -1,4 +1,4 @@
-from textual.app import App, ComposeResult
+from textual.app import ComposeResult
 from textual.widgets import Tabs, Tab, Static
 
 class WorkflowTabs(Static):
