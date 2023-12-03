@@ -5,7 +5,8 @@ from textual.widgets import Tabs, Tab, Static
 class WorkflowTabs(Static):
     """Tabs for selection current part of workflow"""
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         yield Tabs(
             Tab("Install", id="installTab"),
             Tab("Project Manager", id="managerTab"),
