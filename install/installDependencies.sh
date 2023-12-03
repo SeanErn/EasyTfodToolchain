@@ -16,17 +16,19 @@ then
 
     git clone https://github.com/pyenv/pyenv.git ~/.pyenv
 
-    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi' >> ~/.bashrc
-
-    echo "Restart your terminal and then run ./installDependencies.sh again"
+    {
+    echo 'export PYENV_ROOT="$HOME/.pyenv"';
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"';
+    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n eval "$(pyenv init -)"\nfi';
+    } >> ~/.bashrc
+    
+    echo "Restart your terminal and then run ./install/installDependencies.sh again"
 else
     # Install python v3.11.x if not already exists, activate it
     pyenv install 3.11 -s
     pyenv global 3.11
 
     # Install all PIP requirements
-    pip install -r requirements.txt
+    pip install -r install/requirements.txt
     echo "Dependency install finished! Run 'python run.py' in your terminal to continue installation"
 fi

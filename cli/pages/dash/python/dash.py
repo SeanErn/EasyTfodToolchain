@@ -1,25 +1,29 @@
 import subprocess
 from textual.app import App, ComposeResult
-from textual.containers import ScrollableContainer
+from textual.containers import ScrollableContainer, Vertical
 from textual.widgets import Button, Footer, Header, Static, MarkdownViewer, ProgressBar, RichLog, Tabs, Tab, TextArea
 from textual.reactive import Reactive
 from textual.screen import Screen, ModalScreen
 from textual.containers import Grid
 from pathlib import Path
+
+from cli.pages.install.python.install import LogInstall
 from cli.shared.workflowTabs import WorkflowTabs
 import sys
 import threading
 import os
 
+
 class LogDash(ModalScreen):
-    BINDINGS=[("l", "toggle_log", "Toggles the log viewer"), ("r", "refresh_log", "Refreshes the log viewer")]
+    BINDINGS = [("l", "toggle_log", "Toggles the log viewer"), ("r", "refresh_log", "Refreshes the log viewer")]
+
     def compose(self) -> ComposeResult:
         yield Vertical(
             Header(),
             RichLog(highlight=True, id="dashLog"),
             id="dashLogContainer"
         )
-    
+
     def on_mount(self) -> None:
         self.title = "Log Viewer"
         self.sub_title = "Press R to refresh log"
@@ -39,15 +43,18 @@ class LogDash(ModalScreen):
     def action_toggle_log(self) -> None:
         self.app.pop_screen()
 
+
 class Dash(Screen):
-    BINDINGS=[("l", "toggle_log", "Toggles the log viewer")]
+    logScreenActive: bool
+    BINDINGS = [("l", "toggle_log", "Toggles the log viewer")]
+
     def compose(self) -> ComposeResult:
         yield Grid(
             WorkflowTabs(),
             TextArea("This is dash"),
             id="dashContainer"
-        )      
+        )
 
     def action_toggle_log(self) -> None:
         self.logScreenActive = True
-        self.app.push_screen(LogInstall()) 
+        self.app.push_screen(LogInstall())

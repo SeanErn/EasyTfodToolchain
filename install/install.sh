@@ -1,6 +1,7 @@
 #!/bin/bash
 LOGFILE="logs/_install_$(date +%Y%m%d-%H%M%S).log"
 exec 3>&1 1> >(tee -a "$LOGFILE") 2>&1
+# shellcheck disable=SC2064
 trap "echo 'ERROR: An error occurred during execution, check log $LOGFILE for details.' >&3" ERR
 trap '{ set +x; } 2>/dev/null; echo -n "[$(date -Is)] "; set -x' DEBUG
 
@@ -33,6 +34,7 @@ function installCudnn {
     sudo cp /var/cudnn-local-repo-*/cudnn-local-*-keyring.gpg /usr/share/keyrings/
     sudo apt-get update
     sudo apt-get install libcudnn8=8.9.6.50-1+cuda12.2
+    sudo rm cudnn-local-repo-ubuntu2204-8.9.6.50_1.0-1_amd64.deb
     echo "prog20"
 }
 
