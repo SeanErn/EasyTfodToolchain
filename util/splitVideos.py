@@ -16,10 +16,6 @@ if not os.path.isdir(EXPORT_DIR):
     print("Creating export directory...")
     os.mkdir(EXPORT_DIR)
 
-# Function to extract frames
-import cv2
-import os
-
 
 def extract_frames(video_path: str, skip_frames: int):
     # Open the video file
