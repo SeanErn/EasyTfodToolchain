@@ -12,7 +12,4 @@ def package_installed(package_name: str) -> bool:
 
 
 def meets_min_requirements() -> bool:
-    if (int(python_version_tuple()[1]) >= 11) and package_installed("textual"):
-        return True
-    else:
-        return False
+    return bool((int(python_version_tuple()[1]) >= 11) and package_installed("textual"))
