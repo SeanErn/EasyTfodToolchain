@@ -1,18 +1,15 @@
 import subprocess
 from subprocess import Popen
 
-from textual.app import App, ComposeResult
-from textual.containers import ScrollableContainer
+from textual.app import ComposeResult
 from textual.widgets import (
     Button,
-    Footer,
     Header,
     Static,
     MarkdownViewer,
     ProgressBar,
     RichLog,
 )
-from textual.reactive import Reactive
 from textual.screen import Screen, ModalScreen
 from textual.containers import Vertical
 from pathlib import Path
