@@ -67,7 +67,6 @@ class Install(Screen):
 class InstallContent(Static):
     """content of install screen"""
 
-    #   logPipe = Reactive("Press start to start the installation.")
     def compose(self) -> ComposeResult:
         yield MarkdownViewer(
             Path("cli/pages/install/md/install.md").read_text(),
@@ -126,7 +125,6 @@ class InstallButtons(Static):
             output = self.process.stdout.readline()
             if output:
                 output = output.strip().decode()
-                #  self.logPipe = output
                 if output.startswith("prog"):
                     # Remove the 'prog' prefix and print the progress
                     progress = output[4:]  # Slice the string from the 4th character
