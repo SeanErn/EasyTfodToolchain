@@ -20,7 +20,8 @@ class LogDash(ModalScreen):
         ("r", "refresh_log", "Refreshes the log viewer"),
     ]
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         yield Vertical(
             Header(), RichLog(highlight=True, id="dashLog"), id="dashLogContainer"
         )
@@ -51,7 +52,8 @@ class Dash(Screen):
     logScreenActive: bool
     BINDINGS = [("l", "toggle_log", "Toggles the log viewer")]
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         yield Grid(WorkflowTabs(), TextArea("This is dash"), id="dashContainer")
 
     def action_toggle_log(self) -> None:

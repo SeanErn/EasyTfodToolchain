@@ -36,7 +36,8 @@ class RunToolkit(App):
         """An action to toggle dark mode."""
         self.dark = not self.dark
 
-    def action_quit(self) -> None:
+    @staticmethod
+    def action_quit() -> None:
         """An action to quit the app. DOES NOT STOP THE INSTALLATION IF STARTED"""
         sys.exit(0)
 
