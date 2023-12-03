@@ -28,5 +28,5 @@ json_file = displayer.get_metadata_json()
 with open(export_json_file, "w") as f:
     f.write(json_file)
 
-with zipfile.ZipFile(args.filename, "r") as zip:
-    zip.extractall(EXPORT_DIR)
+with zipfile.ZipFile(args.filename, "r") as zipFile:
+    zipFile.extractall(EXPORT_DIR)

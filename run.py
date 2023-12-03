@@ -1,5 +1,5 @@
 import subprocess
-from sys import exit
+import sys
 
 from cli.pages.install.python.dependencyChecker import meets_min_requirements
 
@@ -15,7 +15,7 @@ if not meets_min_requirements():
         ["./installDependencies.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
     )
     process.wait()
-    exit(
+    sys.exit(
         "Dependencies have been installed. Please restart your terminal and run this program again."
     )
 # Run rest as normal
@@ -38,7 +38,7 @@ class RunToolkit(App):
 
     def action_quit(self) -> None:
         """An action to quit the app. DOES NOT STOP THE INSTALLATION IF STARTED"""
-        exit(0)
+        sys.exit(0)
 
 
 if __name__ == "__main__":
