@@ -3,7 +3,15 @@ from subprocess import Popen
 
 from textual.app import App, ComposeResult
 from textual.containers import ScrollableContainer
-from textual.widgets import Button, Footer, Header, Static, MarkdownViewer, ProgressBar, RichLog
+from textual.widgets import (
+    Button,
+    Footer,
+    Header,
+    Static,
+    MarkdownViewer,
+    ProgressBar,
+    RichLog,
+)
 from textual.reactive import Reactive
 from textual.screen import Screen, ModalScreen
 from textual.containers import Vertical
@@ -15,13 +23,14 @@ import os
 
 
 class LogInstall(ModalScreen):
-    BINDINGS = [("l", "toggle_log", "Toggles the log viewer"), ("r", "refresh_log", "Refreshes the log viewer")]
+    BINDINGS = [
+        ("l", "toggle_log", "Toggles the log viewer"),
+        ("r", "refresh_log", "Refreshes the log viewer"),
+    ]
 
     def compose(self) -> ComposeResult:
         yield Vertical(
-            Header(),
-            RichLog(highlight=True, id="installLog"),
-            id="installLogContainer"
+            Header(), RichLog(highlight=True, id="installLog"), id="installLogContainer"
         )
 
     def on_mount(self) -> None:
@@ -30,7 +39,7 @@ class LogInstall(ModalScreen):
         self.action_refresh_log()
 
     def action_refresh_log(self) -> None:
-        log_files = Path('logs').glob('_install_*.log')
+        log_files = Path("logs").glob("_install_*.log")
         log_files = list(log_files)
 
         if log_files:
@@ -50,10 +59,7 @@ class Install(Screen):
 
     def compose(self) -> ComposeResult:
         yield Vertical(
-            WorkflowTabs(),
-            InstallContent(),
-            InstallButtons(),
-            id="installContainer"
+            WorkflowTabs(), InstallContent(), InstallButtons(), id="installContainer"
         )
 
     def action_toggle_log(self) -> None:
@@ -66,13 +72,20 @@ class InstallContent(Static):
 
     #   logPipe = Reactive("Press start to start the installation.")
     def compose(self) -> ComposeResult:
-        yield MarkdownViewer(Path("cli/pages/install/md/install.md").read_text(), show_table_of_contents=False)
+        yield MarkdownViewer(
+            Path("cli/pages/install/md/install.md").read_text(),
+            show_table_of_contents=False,
+        )
 
 
 class InstallButtons(Static):
     """Install widget"""
+
     process: Popen[bytes]
-    BINDINGS = [("space", "start_install", "Start the install"), ("q", "cancel_install", "Stops the install")]
+    BINDINGS = [
+        ("space", "start_install", "Start the install"),
+        ("q", "cancel_install", "Stops the install"),
+    ]
     started = False
 
     def action_start_install(self) -> None:
@@ -102,7 +115,9 @@ class InstallButtons(Static):
 
     def run_bash_script(self):
         # Run the bash script
-        self.process = subprocess.Popen(['./install/install.sh'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        self.process = subprocess.Popen(
+            ["./install/install.sh"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
 
         # Read the output in real-time
         while True:
@@ -115,7 +130,7 @@ class InstallButtons(Static):
             if output:
                 output = output.strip().decode()
                 #  self.logPipe = output
-                if output.startswith('prog'):
+                if output.startswith("prog"):
                     # Remove the 'prog' prefix and print the progress
                     progress = output[4:]  # Slice the string from the 4th character
                     self.query_one(ProgressBar).progress = float(progress)
