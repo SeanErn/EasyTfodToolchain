@@ -4,7 +4,7 @@ from sys import exit
 from cli.pages.install.python.dependencyChecker import meets_min_requirements
 
 # User must be sudo to run program
-subprocess.run(["sudo", "-v"])
+subprocess.run(["/usr/bin/sudo", "-v"])
 
 # Check for minimum requirements
 if not meets_min_requirements():
