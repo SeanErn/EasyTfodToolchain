@@ -25,7 +25,8 @@ class LogInstall(ModalScreen):
         ("r", "refresh_log", "Refreshes the log viewer"),
     ]
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         yield Vertical(
             Header(), RichLog(highlight=True, id="installLog"), id="installLogContainer"
         )
@@ -54,7 +55,8 @@ class Install(Screen):
     logScreenActive: bool
     BINDINGS = [("l", "toggle_log", "Toggles the log viewer")]
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         yield Vertical(
             WorkflowTabs(), InstallContent(), InstallButtons(), id="installContainer"
         )
@@ -67,7 +69,8 @@ class Install(Screen):
 class InstallContent(Static):
     """content of install screen"""
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         yield MarkdownViewer(
             Path("cli/pages/install/md/install.md").read_text(),
             show_table_of_contents=False,
@@ -133,7 +136,8 @@ class InstallButtons(Static):
                     if progress == "Done":
                         self.query("#cancelBtn").remove()
 
-    def compose(self) -> ComposeResult:
+    @staticmethod
+    def compose() -> ComposeResult:
         """Child widgets of install"""
         yield ProgressBar(total=100, id="installProgress", show_eta=False)
         yield Button("Start", id="startBtn", variant="success")
