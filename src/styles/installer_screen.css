@@ -1,0 +1,38 @@
+/* File: styles/installer_screen.css */
+
+InstallerScreen {
+    layout: vertical;
+    background: $surface;
+}
+
+#main_container {
+    width: 100%;
+    height: 1fr;
+}
+
+#content {
+    width: 100%;
+    height: auto;
+    padding: 1 2;
+}
+
+#title {
+    content-align: center middle;
+    width: 100%;
+    height: 3;
+    background: $accent;
+    color: $text;
+}
+
+#description {
+    width: 100%;
+    height: auto;
+    margin: 1 0;
+}
+
+#log {
+    width: 100%;
+    height: 1fr;
+    border: solid $primary;
+    overflow-y: scroll;
+}

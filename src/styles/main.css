@@ -1,0 +1,57 @@
+Screen {
+    layout: grid;
+    grid-size: 1;
+    grid-rows: 1fr 8fr 3;
+}
+
+Header {
+    height: 3;
+    background: $boost;
+    color: $text;
+    text-align: center;
+    text-style: bold;
+}
+
+#content {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+    background: $surface;
+}
+
+#title {
+    content-align: center middle;
+    width: 100%;
+    height: 3;
+    text-style: bold;
+    color: $success;
+}
+
+#description {
+    width: 100%;
+    height: auto;
+    text-align: center;
+    padding: 1 2;
+}
+
+#start_button {
+    width: 50%;
+    margin: 1 0;
+}
+
+#log_container {
+    width: 100%;
+    height: 100%;
+}
+
+Log {
+    background: $surface-darken-1;
+    color: $text;
+    height: auto;
+    border: none;
+}
+
+InstallerFooter {
+    height: 3;
+}
+

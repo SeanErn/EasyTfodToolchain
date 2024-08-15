@@ -1,0 +1,18 @@
+EasyTfodToolchain/
+├── src/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── app.py
+│   ├── screens/
+│   │   ├── __init__.py
+│   │   └── installer_screen.py
+│   ├── widgets/
+│   │   ├── __init__.py
+│   │   └── footer.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   └── system_installer.py
+│   └── styles/
+│       └── main.css
+├── dependencies.txt
+└── README.md
