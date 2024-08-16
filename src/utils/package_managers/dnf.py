@@ -21,7 +21,9 @@ PACKAGES = [
     "akmod-nvidia",
     "cuda",
     "cudnn9-cuda-12",
-    "git"
+    "git",
+    "protobuf-compiler",
+    "make"
 ]
 
 def run_command(command: str, sudo_password: str, log_write: callable) -> int:
@@ -78,7 +80,7 @@ def add_repo_repository(repo: str, sudo_password: str, log_write: callable) -> N
 
 def install_package(package_name: str, sudo_password: str, log_write: callable) -> None:
     log_write(f"Attempting to install {package_name} using dnf")
-    command = f"dnf install -y {package_name}"
+    command = f"dnf install --best --allowerasing -y {package_name}"
     returncode = run_command(command, sudo_password, log_write)
     
     if returncode == 0:
@@ -88,7 +90,7 @@ def install_package(package_name: str, sudo_password: str, log_write: callable) 
 
 def update_system(sudo_password: str, log_write: callable) -> None:
     log_write("Updating system packages")
-    command = "dnf update -y"
+    command = "dnf update --best --allowerasing -y"
     returncode = run_command(command, sudo_password, log_write)
     
     if returncode == 0:
