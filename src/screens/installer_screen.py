@@ -7,8 +7,7 @@ from textual.screen import Screen
 from textual.widgets import Header, Log, Static
 from widgets.footer import InstallerFooter
 from widgets.password_dialog import PasswordDialog
-from widgets.progress_indicator import ProgressIndicator
-from utils.system_installer import SystemPackageInstaller
+from utils.threaded_installer import ThreadedInstaller
 
 class InstallerScreen(Screen):
     BINDINGS = [("ctrl+q", "quit", "Quit")]
@@ -16,9 +15,8 @@ class InstallerScreen(Screen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._log = None
-        self._progress = None
         self._sudo_password = None
-        self._installation_in_progress = False
+        self._threaded_installer = None
         logging.info("InstallerScreen initialized")
 
     def compose(self) -> ComposeResult:
@@ -31,7 +29,6 @@ class InstallerScreen(Screen):
                     Static("This tool will help you set up the TensorFlow Object Detection environment.", id="description"),
                     id="content",
                 ),
-                ProgressIndicator(id="progress"),
                 Log(id="log", highlight=True),
                 id="main_container"
             )
@@ -43,7 +40,6 @@ class InstallerScreen(Screen):
     def on_mount(self):
         try:
             self._log = self.query_one("#log")
-            self._progress = self.query_one("#progress")
             logging.info("InstallerScreen mounted")
             self._log_write("[green]Welcome to the EasyTfodToolchain Installer![/green]")
             self._log_write("This log will show the progress of the installation.")
@@ -53,10 +49,9 @@ class InstallerScreen(Screen):
 
     def on_installer_footer_install_requested(self, message: InstallerFooter.InstallRequested) -> None:
         try:
-            if not self._installation_in_progress:
+            if not self._threaded_installer or not self._threaded_installer.is_installing:
                 logging.info("Install requested from footer")
                 self._log_write("[blue]Install requested. Starting installation process...[/blue]")
-                self._installation_in_progress = True
                 self.run_installation()
             else:
                 logging.info("Installation already in progress")
@@ -68,11 +63,9 @@ class InstallerScreen(Screen):
     def on_installer_footer_exit_requested(self, message: InstallerFooter.ExitRequested) -> None:
         try:
             logging.info("Exit requested from footer")
-            if self._installation_in_progress:
+            if self._threaded_installer and self._threaded_installer.is_installing:
                 self._log_write("[yellow]Cancelling installation...[/yellow]")
-                self._installation_in_progress = False
-                # Add any cleanup code here if needed
-                self._log_write("[red]Installation cancelled.[/red]")
+                self._threaded_installer.cancel_installation()
             self.app.exit()
         except Exception as e:
             logging.exception(f"Error handling exit request from footer: {str(e)}")
@@ -89,15 +82,14 @@ class InstallerScreen(Screen):
 
     def on_password_entered(self, password: str) -> None:
         try:
-            if password and self._installation_in_progress:
+            if password:
                 logging.info("Password received, starting installation")
                 self._log_write("[green]Password received. Starting package installation...[/green]")
                 self._sudo_password = password
                 self.install_packages()
             else:
-                logging.warning("No password provided or installation cancelled")
-                self._log_write("[red]Installation cancelled: No password provided or installation was stopped.[/red]")
-                self._installation_in_progress = False
+                logging.warning("No password provided")
+                self._log_write("[red]Installation cancelled: No password provided.[/red]")
         except Exception as e:
             logging.exception(f"Error processing entered password: {str(e)}")
             self._log_write(f"[red]An error occurred while processing the password: {str(e)}[/red]")
@@ -106,31 +98,20 @@ class InstallerScreen(Screen):
         try:
             logging.info("Starting package installation")
             self._log_write("[green]Starting package installation...[/green]")
-            installer = SystemPackageInstaller(self._log_write, self._sudo_password)
             packages = ["python3-dev", "python3-pip", "libgl1-mesa-glx"]  # Example packages
             
-            total_packages = len(packages)
-            for i, package in enumerate(packages, 1):
-                if not self._installation_in_progress:
-                    logging.info("Installation cancelled")
-                    self._log_write("[red]Installation cancelled.[/red]")
-                    break
-                self._log_write(f"[yellow]Installing {package}...[/yellow]")
-                result = installer.install_package(package)
-                self._log_write(result)
-                self._progress.update_progress(i / total_packages)
-            
-            if self._installation_in_progress:
-                self._log_write("[green]Installation complete![/green]")
-                logging.info("Installation process completed")
-            self._installation_in_progress = False
-            self._sudo_password = None  # Clear the password after use
+            self._threaded_installer = ThreadedInstaller(self._log_write, self._sudo_password)
+            self._threaded_installer.start_installation(packages, self.on_installation_complete)
         except Exception as e:
             logging.exception(f"Error during package installation: {str(e)}")
             self._log_write(f"[red]An error occurred during package installation: {str(e)}[/red]")
         finally:
-            self._sudo_password = None  # Ensure password is cleared even if an exception occurs
-            self._installation_in_progress = False
+            self._sudo_password = None  # Clear the password after use
+
+    def on_installation_complete(self):
+        logging.info("Installation process completed")
+        self._log_write("[green]Installation process completed![/green]")
+        self._threaded_installer = None
 
     def on_resize(self) -> None:
         logging.debug("InstallerScreen resized")
