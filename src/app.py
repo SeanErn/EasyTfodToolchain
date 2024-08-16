@@ -8,7 +8,14 @@ from screens.installer_screen import InstallerScreen
 logger = logging.getLogger()
 
 class EasyTfodToolchainInstaller(App):
-    CSS_PATH = ["styles/main.css", "styles/installer_screen.css"]
+    CSS_PATH = [
+        "styles/main.css",
+        "styles/content.css",
+        "styles/log_container.css",
+        "styles/footer.css",
+        "styles/installer_screen.css",
+        "styles/password_dialog.css"
+    ]
     SCREENS = {"installer": InstallerScreen()}
     BINDINGS = [("ctrl+q", "quit", "Quit")]
 
