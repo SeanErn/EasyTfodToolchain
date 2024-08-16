@@ -1,3 +1,5 @@
+/* File: styles/main.css */
+
 Screen {
     layout: grid;
     grid-size: 1;
@@ -44,7 +46,7 @@ Header {
     height: 100%;
 }
 
-Log {
+RichLog {
     background: $surface-darken-1;
     color: $text;
     height: auto;
@@ -54,4 +56,3 @@ Log {
 InstallerFooter {
     height: 3;
 }
-

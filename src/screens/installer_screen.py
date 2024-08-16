@@ -4,7 +4,8 @@ import logging
 from textual.app import ComposeResult
 from textual.containers import Container, Vertical
 from textual.screen import Screen
-from textual.widgets import Header, Log, Static
+from textual.widgets import Header, Static
+from textual.widgets import RichLog
 from widgets.footer import InstallerFooter
 from widgets.password_dialog import PasswordDialog
 from utils.threaded_installer import ThreadedInstaller
@@ -29,7 +30,7 @@ class InstallerScreen(Screen):
                     Static("This tool will help you set up the TensorFlow Object Detection environment.", id="description"),
                     id="content",
                 ),
-                Log(id="log", highlight=True),
+                RichLog(id="log", markup=True),
                 id="main_container"
             )
             yield InstallerFooter()
@@ -132,4 +133,4 @@ class InstallerScreen(Screen):
 
     def _log_write(self, message: str):
         """Helper method to write to log with proper formatting."""
-        self._log.write_line(message)
+        self._log.write(message)
