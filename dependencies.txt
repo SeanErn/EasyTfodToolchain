@@ -1,19 +1,2 @@
 # UI Framework
 textual==0.76.0
-
-# Networking and API requests (if needed)
-requests==2.28.1
-
-# Data processing and analysis (if needed)
-numpy==1.23.5
-pandas==1.5.2
-
-# TensorFlow and Object Detection API (adjust versions as needed)
-tensorflow==2.9.1
-tensorflow-object-detection-api==0.1.1
-
-# Image processing (if needed)
-Pillow==9.3.0
-
-# For creating and managing virtual environments
-virtualenv==20.17.1
