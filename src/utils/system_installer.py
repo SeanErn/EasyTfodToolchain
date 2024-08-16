@@ -5,6 +5,8 @@ import shutil
 import logging
 from typing import Callable
 
+logger = logging.getLogger()
+
 class SystemPackageInstaller:
     def __init__(self, log_write: Callable[[str], None], sudo_password: str):
         self.log_write = log_write
@@ -47,7 +49,7 @@ class SystemPackageInstaller:
         sudo_command = f"sudo -S {command}"
 
         try:
-            logging.debug(f"Attempting to install {package_name}")
+            logger.debug(f"Attempting to install {package_name}")
             process = subprocess.Popen(
                 sudo_command,
                 shell=True,
@@ -64,15 +66,15 @@ class SystemPackageInstaller:
                 self.log_write(line.strip())
             
             for line in stderr.splitlines():
-                logging.error(line.strip())
+                logger.error(line.strip())
                 self.log_write(f"[red]{line.strip()}[/red]")
             
             if process.returncode == 0:
-                logging.debug(f"Successfully installed {package_name}")
+                logger.debug(f"Successfully installed {package_name}")
                 return f"Successfully installed {package_name}"
             else:
-                logging.error(f"Failed to install {package_name}")
+                logger.error(f"Failed to install {package_name}")
                 return f"Failed to install {package_name}"
         except Exception as e:
-            logging.exception(f"Error installing {package_name}")
+            logger.exception(f"Error installing {package_name}")
             return f"Error installing {package_name}: {str(e)}"

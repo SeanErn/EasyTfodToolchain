@@ -6,6 +6,8 @@ from textual.containers import Horizontal
 from textual.reactive import reactive
 from textual.message import Message
 
+logger = logging.getLogger()
+
 class InstallerFooter(Static):
     DEFAULT_CSS = """
     InstallerFooter {
@@ -38,11 +40,11 @@ class InstallerFooter(Static):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "install":
-            logging.info("Install button pressed")
+            logger.info("Install button pressed")
             self.post_message(self.InstallRequested())
         elif event.button.id == "exit":
-            logging.info("Exit button pressed")
+            logger.info("Exit button pressed")
             self.post_message(self.ExitRequested())
 
     def on_mount(self):
-        logging.info("InstallerFooter mounted")
+        logger.info("InstallerFooter mounted")

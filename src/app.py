@@ -5,6 +5,8 @@ from textual.app import App
 from textual.widgets import Footer
 from screens.installer_screen import InstallerScreen
 
+logger = logging.getLogger()
+
 class EasyTfodToolchainInstaller(App):
     CSS_PATH = ["styles/main.css", "styles/installer_screen.css"]
     SCREENS = {"installer": InstallerScreen()}
@@ -12,21 +14,21 @@ class EasyTfodToolchainInstaller(App):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        logging.info("EasyTfodToolchainInstaller initialized")
+        logger.info("EasyTfodToolchainInstaller initialized")
 
     def on_mount(self) -> None:
-        logging.info("EasyTfodToolchainInstaller mounted")
+        logger.info("EasyTfodToolchainInstaller mounted")
         try:
             self.push_screen("installer")
         except Exception as e:
-            logging.exception(f"Error pushing installer screen: {str(e)}")
+            logger.exception(f"Error pushing installer screen: {str(e)}")
 
     def on_load(self) -> None:
-        logging.info("EasyTfodToolchainInstaller loaded")
+        logger.info("EasyTfodToolchainInstaller loaded")
 
     def on_exit(self) -> None:
-        logging.info("EasyTfodToolchainInstaller exiting")
+        logger.info("EasyTfodToolchainInstaller exiting")
 
     def compose(self):
-        logging.debug("Composing main app layout")
+        logger.debug("Composing main app layout")
         yield Footer()
