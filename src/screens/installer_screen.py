@@ -1,6 +1,7 @@
 # File: screens/installer_screen.py
 
 import logging
+import asyncio
 from textual.app import ComposeResult
 from textual.containers import Container, Vertical
 from textual.screen import Screen
@@ -10,7 +11,7 @@ from widgets.footer import InstallerFooter
 from widgets.password_dialog import PasswordDialog
 from utils.threaded_installer import ThreadedInstaller
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 class InstallerScreen(Screen):
     BINDINGS = [("ctrl+q", "quit", "Quit")]
@@ -20,6 +21,7 @@ class InstallerScreen(Screen):
         self._log = None
         self._sudo_password = None
         self._threaded_installer = None
+        self._password_future = None
         logger.info("InstallerScreen initialized")
 
     def compose(self) -> ComposeResult:
@@ -55,7 +57,7 @@ class InstallerScreen(Screen):
             if not self._threaded_installer or not self._threaded_installer.is_installing:
                 logger.info("Install requested from footer")
                 self._log_write("[blue]Install requested. Starting installation process...[/blue]")
-                self.run_installation()
+                asyncio.create_task(self.run_installation())
             else:
                 logger.info("Installation already in progress")
                 self._log_write("[yellow]Installation is already in progress.[/yellow]")
@@ -74,40 +76,42 @@ class InstallerScreen(Screen):
             logger.exception(f"Error handling exit request from footer: {str(e)}")
             self._log_write(f"[red]An error occurred while exiting: {str(e)}[/red]")
 
-    def run_installation(self) -> None:
+    async def run_installation(self) -> None:
         try:
             logger.info("Prompting for sudo password")
             self._log_write("Please enter your sudo password to proceed with the installation.")
-            self.app.push_screen(PasswordDialog(), callback=self.on_password_entered)
-        except Exception as e:
-            logger.exception(f"Error running installation: {str(e)}")
-            self._log_write(f"[red]An error occurred while starting the installation: {str(e)}[/red]")
-
-    def on_password_entered(self, password: str) -> None:
-        try:
+            password = await self.get_password()
             if password:
                 logger.info("Password received, starting installation")
-                self._log_write("[green]Password received. Starting package installation...[/green]")
+                self._log_write("[green]Password received. Starting system setup...[/green]")
                 self._sudo_password = password
-                self.install_packages()
+                await self.setup_system()
             else:
                 logger.warning("No password provided")
                 self._log_write("[red]Installation cancelled: No password provided.[/red]")
         except Exception as e:
-            logger.exception(f"Error processing entered password: {str(e)}")
-            self._log_write(f"[red]An error occurred while processing the password: {str(e)}[/red]")
+            logger.exception(f"Error running installation: {str(e)}")
+            self._log_write(f"[red]An error occurred while starting the installation: {str(e)}[/red]")
 
-    def install_packages(self) -> None:
+    async def get_password(self):
+        self._password_future = asyncio.Future()
+        self.app.push_screen(PasswordDialog(), callback=self.on_password_entered)
+        return await self._password_future
+
+    def on_password_entered(self, password: str):
+        if not self._password_future.done():
+            self._password_future.set_result(password)
+
+    async def setup_system(self) -> None:
         try:
-            logger.info("Starting package installation")
-            self._log_write("[green]Starting package installation...[/green]")
-            packages = ["python3-devel", "python3-pip", "mesa-libGL"]  # Updated package names
+            logger.info("Starting system setup")
+            self._log_write("[green]Starting system setup...[/green]")
             
             self._threaded_installer = ThreadedInstaller(self._log_write, self._sudo_password)
-            self._threaded_installer.start_installation(packages, self.on_installation_complete)
+            self._threaded_installer.start_installation(self.on_installation_complete)
         except Exception as e:
-            logger.exception(f"Error during package installation: {str(e)}")
-            self._log_write(f"[red]An error occurred during package installation: {str(e)}[/red]")
+            logger.exception(f"Error during system setup: {str(e)}")
+            self._log_write(f"[red]An error occurred during system setup: {str(e)}[/red]")
         finally:
             self._sudo_password = None  # Clear the password after use
 
