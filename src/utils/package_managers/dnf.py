@@ -20,7 +20,8 @@ PACKAGES = [
     "gcc",
     "akmod-nvidia",
     "cuda",
-    "cudnn9-cuda-12"
+    "cudnn9-cuda-12",
+    "git"
 ]
 
 def run_command(command: str, sudo_password: str, log_write: callable) -> int:
