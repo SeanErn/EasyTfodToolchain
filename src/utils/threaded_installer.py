@@ -6,24 +6,24 @@ import asyncio
 import logging
 from typing import Callable
 from utils.system_installer import SystemPackageInstaller
-from utils.tfod_installer import TFODInstaller
+from utils.tensorflow_installer import TensorFlowInstaller
 
 logger = logging.getLogger(__name__)
 
 class ThreadedInstaller:
-    def __init__(self, log_write: Callable[[str], None], sudo_password: str, skip_system_install=False, skip_tfod_install=False):
+    def __init__(self, log_write: Callable[[str], None], sudo_password: str, skip_system: bool = False, skip_tfod: bool = False):
         self.log_write = log_write
         self.sudo_password = sudo_password
-        self.skip_system_install = skip_system_install
-        self.skip_tfod_install = skip_tfod_install
+        self.skip_system = skip_system
+        self.skip_tfod = skip_tfod
         self.system_installer = SystemPackageInstaller(self._queue_log_write, sudo_password)
-        self.tfod_installer = TFODInstaller(self._queue_log_write)
+        self.tensorflow_installer = TensorFlowInstaller(self._queue_log_write)
         self.installation_thread = None
         self.is_installing = False
         self.message_queue = queue.Queue()
         logger.info("ThreadedInstaller initialized")
-        logger.info(f"Skip system install: {self.skip_system_install}")
-        logger.info(f"Skip TFOD install: {self.skip_tfod_install}")
+        logger.info(f"Skip system installation: {self.skip_system}")
+        logger.info(f"Skip TFOD installation: {self.skip_tfod}")
 
     def _queue_log_write(self, message: str):
         self.message_queue.put(message)
@@ -49,23 +49,19 @@ class ThreadedInstaller:
                 self._queue_log_write("[red]Installation cancelled.[/red]")
                 return
 
-            if not self.skip_system_install:
+            if self.skip_system:
+                logger.warning("Skipping system setup")
+                self._queue_log_write("[yellow]WARNING: Skipping system package installation.[/yellow]")
+            else:
                 logger.info("Running system setup")
-                self._queue_log_write("[blue]Starting system package installation...[/blue]")
                 self.system_installer.setup_system()
-                self._queue_log_write("[green]System package installation completed.[/green]")
-            else:
-                logger.info("Skipping system package installation")
-                self._queue_log_write("[yellow]Skipping system package installation.[/yellow]")
 
-            if not self.skip_tfod_install:
-                logger.info("Running TFOD installation")
-                self._queue_log_write("[blue]Starting TensorFlow Object Detection API installation...[/blue]")
-                self.tfod_installer.run_installation()
-                self._queue_log_write("[green]TensorFlow Object Detection API installation completed.[/green]")
+            if self.skip_tfod:
+                logger.warning("Skipping TensorFlow Object Detection API installation")
+                self._queue_log_write("[yellow]WARNING: Skipping TensorFlow Object Detection API installation.[/yellow]")
             else:
-                logger.info("Skipping TFOD installation")
-                self._queue_log_write("[yellow]Skipping TensorFlow Object Detection API installation.[/yellow]")
+                logger.info("Running TensorFlow Object Detection API installation")
+                self.tensorflow_installer.run_installation()
 
         except Exception as e:
             logger.exception(f"Error during installation: {str(e)}")
@@ -84,7 +80,7 @@ class ThreadedInstaller:
             except queue.Empty:
                 await asyncio.sleep(0.1)  # Small delay to prevent busy waiting
 
-        self.log_write("[green]Installation process complete![/green]")
+        self.log_write("[green]Installation complete![/green]")
         logger.info("Installation process completed")
         on_complete()
 
@@ -94,6 +90,4 @@ class ThreadedInstaller:
             self.is_installing = False
             self._queue_log_write("[yellow]Installation cancelled.[/yellow]")
             if self.installation_thread:
-                self.installation_thread.join()
-
-logger.info("ThreadedInstaller module loaded")
+                self.installation_thread.join() 

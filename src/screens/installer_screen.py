@@ -22,8 +22,8 @@ class InstallerScreen(Screen):
         self._sudo_password = None
         self._threaded_installer = None
         self._password_future = None
-        self.skip_system_install = False
-        self.skip_tfod_install = False
+        self.skip_system = False
+        self.skip_tfod = False
         logger.info("InstallerScreen initialized")
 
     def compose(self) -> ComposeResult:
@@ -50,10 +50,10 @@ class InstallerScreen(Screen):
             logger.info("InstallerScreen mounted")
             self._log_write("[green]Welcome to the EasyTfodToolchain Installer![/green]")
             self._log_write("This log will show the progress of the installation.")
-            if self.skip_system_install:
-                self._log_write("[yellow]System package installation will be skipped.[/yellow]")
-            if self.skip_tfod_install:
-                self._log_write("[yellow]TensorFlow Object Detection API installation will be skipped.[/yellow]")
+            if self.skip_system:
+                self._log_write("[yellow]WARNING: System package installation will be skipped.[/yellow]")
+            if self.skip_tfod:
+                self._log_write("[yellow]WARNING: TensorFlow Object Detection API installation will be skipped.[/yellow]")
             self.adjust_log_height()
         except Exception as e:
             logger.exception(f"Error in InstallerScreen on_mount: {str(e)}")
@@ -84,22 +84,18 @@ class InstallerScreen(Screen):
 
     async def run_installation(self) -> None:
         try:
-            if not self.skip_system_install:
-                logger.info("Prompting for sudo password")
-                self._log_write("Please enter your sudo password to proceed with the installation.")
-                password = await self.get_password()
-                if password:
-                    logger.info("Password received, starting installation")
-                    self._log_write("[green]Password received. Starting system setup...[/green]")
-                    self._sudo_password = password
-                    await self.setup_system()
-                else:
-                    logger.warning("No password provided")
-                    self._log_write("[red]Installation cancelled: No password provided.[/red]")
+            logger.info("Prompting for sudo password")
+            self._log_write("Please enter your sudo password to proceed with the installation.")
+            password = await self.get_password()
+            if password:
+                logger.info("Password received, starting installation")
+                self._log_write("[green]Password received. Starting installation...[/green]")
+                self._sudo_password = password
+                self._threaded_installer = ThreadedInstaller(self._log_write, self._sudo_password, self.skip_system, self.skip_tfod)
+                self._threaded_installer.start_installation(self.on_installation_complete)
             else:
-                logger.info("Skipping system package installation")
-                self._log_write("[yellow]Skipping system package installation.[/yellow]")
-                await self.setup_system(skip_system_install=True)
+                logger.warning("No password provided")
+                self._log_write("[red]Installation cancelled: No password provided.[/red]")
         except Exception as e:
             logger.exception(f"Error running installation: {str(e)}")
             self._log_write(f"[red]An error occurred while starting the installation: {str(e)}[/red]")
@@ -112,24 +108,6 @@ class InstallerScreen(Screen):
     def on_password_entered(self, password: str):
         if not self._password_future.done():
             self._password_future.set_result(password)
-
-    async def setup_system(self, skip_system_install=False) -> None:
-        try:
-            logger.info("Starting system setup")
-            self._log_write("[green]Starting system setup...[/green]")
-            
-            self._threaded_installer = ThreadedInstaller(
-                self._log_write,
-                self._sudo_password,
-                skip_system_install=skip_system_install,
-                skip_tfod_install=self.skip_tfod_install
-            )
-            self._threaded_installer.start_installation(self.on_installation_complete)
-        except Exception as e:
-            logger.exception(f"Error during system setup: {str(e)}")
-            self._log_write(f"[red]An error occurred during system setup: {str(e)}[/red]")
-        finally:
-            self._sudo_password = None  # Clear the password after use
 
     def on_installation_complete(self):
         logger.info("Installation process completed")
@@ -155,9 +133,4 @@ class InstallerScreen(Screen):
 
     def _log_write(self, message: str):
         """Helper method to write to log with proper formatting."""
-        if self._log:
-            self._log.write(message)
-        else:
-            logger.warning(f"Log not initialized, couldn't write: {message}")
-
-logger.info("InstallerScreen module loaded")
+        self._log.write(message)

@@ -1,2 +1,11 @@
 # UI Framework
 textual==0.76.0
+
+# TF
+Cython==3.0.5
+tensorflow==2.17.0
+tflite_support==0.4.4
+opencv-contrib-python==4.8.1.78
+
+# Install
+gitpython==3.1.31
