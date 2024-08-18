@@ -13,14 +13,12 @@ RPM_REPOSITORIES = [
 
 REPO_REPOSITORIES = [
     "https://developer.download.nvidia.com/compute/cuda/repos/fedora39/x86_64/cuda-fedora39.repo",
-    "https://developer.download.nvidia.com/compute/cuda/repos/rhel9/x86_64/cuda-rhel9.repo"
 ]
 
 PACKAGES = [
     "gcc",
     "akmod-nvidia",
-    "cuda",
-    "cudnn9-cuda-12",
+    "xorg-x11-drv-nvidia-cuda",
     "git",
     "protobuf-compiler",
     "make"

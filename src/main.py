@@ -2,6 +2,7 @@
 
 import logging
 import sys
+import argparse
 from textual.app import App
 from app import EasyTfodToolchainInstaller
 
@@ -22,12 +23,24 @@ def setup_logging():
     console_handler.setLevel(logging.INFO)
     root_logger.addHandler(console_handler)
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="EasyTfodToolchain Installer")
+    parser.add_argument("--skip-system-install", action="store_true", help="Skip system package installation")
+    parser.add_argument("--skip-tfod-install", action="store_true", help="Skip TensorFlow Object Detection API installation")
+    return parser.parse_args()
+
 def main():
     setup_logging()
+    args = parse_arguments()
     logging.info("Starting the application")
+    logging.info(f"Skip system install: {args.skip_system_install}")
+    logging.info(f"Skip TFOD install: {args.skip_tfod_install}")
     
     try:
-        app = EasyTfodToolchainInstaller()
+        app = EasyTfodToolchainInstaller(
+            skip_system_install=args.skip_system_install,
+            skip_tfod_install=args.skip_tfod_install
+        )
         logging.info("Running the application")
         app.run()
     except Exception as e:
